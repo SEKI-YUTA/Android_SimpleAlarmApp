@@ -58,8 +58,12 @@ public class MainActivity extends AppCompatActivity {
     private void cancelAlarm() {
 
         Intent intent = new Intent(this, AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(this, 0 , intent, 0);
-        
+        if(Build.VERSION.SDK_INT >= 31) {
+            pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(this, 0 , intent, 0);
+        }
+
         if(alarmManager == null) {
             alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         }
@@ -73,10 +77,17 @@ public class MainActivity extends AppCompatActivity {
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(this, 0 , intent, 0);
+        if(Build.VERSION.SDK_INT >= 31) {
+            pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(this, 0 , intent, 0);
+        }
 
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY,pendingIntent);
+        // 一週間おきにアラームを鳴らす
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+//                60 * 60 * 24 * 7 * 1000, pendingIntent);
 
         Toast.makeText(this, "Alarm set successfully", Toast.LENGTH_SHORT).show();
 
